@@ -7,7 +7,7 @@ use Zend\Json\Json;
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
-use T4web\Websocket\WebsocketServer;
+use T4web\Websocket\Server;
 
 class RunWebsocketServer extends AbstractActionController
 {
@@ -35,7 +35,7 @@ class RunWebsocketServer extends AbstractActionController
         $server = IoServer::factory(
             new HttpServer(
                 new WsServer(
-                    new WebsocketServer($this->config['server']['debug-enable'])
+                    new Server($this->config['server']['debug-enable'])
                 )
             ),
             $this->config['server']['port']

@@ -97,3 +97,10 @@ For testing create html (or copy from https://github.com/t4web/Websocket/blob/ma
     </body>
 </html>
 ```
+
+Or from PHP:
+```php
+/** @var \T4web\Websocket\WebsocketClient $wsClient */
+$wsClient = $this->getServiceLocator()->get(\T4web\Websocket\Client::class);
+$wsClient->send('ping', ['message' => 'Hello World']);
+```

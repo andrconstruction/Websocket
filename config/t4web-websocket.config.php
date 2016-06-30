@@ -6,9 +6,9 @@ return [
     'server' => [
         'port' => 8088,
         'debug-enable' => 1,
-
-        'events' => [
-            'xxx' => WWW\EEE\RRR::class,
-        ],
+    ],
+    'client' => [
+        'host' => '127.0.0.1',
+        'port' => 8088,
     ],
 ];
