@@ -26,9 +26,7 @@ class Module
     {
         return array(
             // Describe available commands
-            'queue init' => 'Check config, create table `queue_messages`',
-            'queue realtime-server' => 'Run realtime queue server',
-            'queue worker QUEUE-NAME MESSAGE' => 'Run queue worker',
+            'websocket start' => 'Run websocket server',
         );
     }
 }

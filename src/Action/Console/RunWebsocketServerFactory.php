@@ -13,14 +13,14 @@ class RunWebsocketServerFactory implements FactoryInterface
     {
         $serviceLocator = $controllerManager->getServiceLocator();
 
-        $loop = EventLoopFactory::create();
+//        $loop = EventLoopFactory::create();
 
         $config = $serviceLocator->get('Config');
 
         return new RunWebsocketServer(
 //            $loop,
 //            new SocketServer($loop),
-//            $config['t4web-queue']['queues']
+            $config['t4web-websocket']
         );
     }
 }

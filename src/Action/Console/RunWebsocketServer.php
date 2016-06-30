@@ -7,6 +7,7 @@ use Zend\Json\Json;
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
+use T4web\Websocket\WebsocketServer;
 
 class RunWebsocketServer extends AbstractActionController
 {
@@ -19,7 +20,14 @@ class RunWebsocketServer extends AbstractActionController
         array $config
     )
     {
-        $this->config = $config;
+        $this->config = array_merge(
+            [
+                'server' => [
+                    'debug-enable' => 0,
+                ],
+            ],
+            $config
+        );
     }
 
     public function onDispatch(MvcEvent $e)
@@ -27,13 +35,13 @@ class RunWebsocketServer extends AbstractActionController
         $server = IoServer::factory(
             new HttpServer(
                 new WsServer(
-                    new WebsocketServer()
+                    new WebsocketServer($this->config['server']['debug-enable'])
                 )
             ),
-            $this->config['port']
+            $this->config['server']['port']
         );
 
-        echo "server started on port " . $this->config['port'] . PHP_EOL;
+        echo "server started on port " . $this->config['server']['port'] . PHP_EOL;
 
         $server->run();
     }
