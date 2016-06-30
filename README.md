@@ -110,17 +110,17 @@ $wsClient->send('ping', ['message' => 'Hello World']);
 Each websocket request message must be json object:
 ```json
 {
-    event: 'event-name',
-    data: { field: 'value' }
+    "event": "event-name",
+    "data": { "field": "value" }
 }
 ```
 
 Websocket response message:
 ```json
 {
-    event: 'event-name',
-    data: { field: 'value' },
-    error: 'string|null'
+    "event": "event-name",
+    "data": { "field": "value" },
+    "error": "string|null"
 }
 ```
 
