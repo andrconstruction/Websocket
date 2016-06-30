@@ -4,6 +4,8 @@ namespace T4web\Websocket;
 
 use SplObjectStorage;
 use Exception;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\Event;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -14,12 +16,26 @@ class Server implements MessageComponentInterface
      */
     private $connections;
 
+    /**
+     * @var bool
+     */
     private $isDebugEnabled;
 
-    public function __construct($isDebugEnabled = false)
+    /**
+     * @var EventManager
+     */
+    private $eventManager;
+
+    public function __construct(
+        EventManager $eventManager,
+        $isDebugEnabled = false
+    )
     {
         $this->connections = new SplObjectStorage();
+        $this->eventManager = $eventManager;
         $this->isDebugEnabled = $isDebugEnabled;
+
+        $this->eventManager->setIdentifiers('Websocket');
     }
 
     /**
@@ -49,24 +65,17 @@ class Server implements MessageComponentInterface
             return;
         }
 
-        if ($message['event'] == 'ping') {
-            $response = [
-                'event' => 'pong',
-                'data' => $message['data'],
-                'error' => null,
-            ];
-            $this->debug('Send message: ' . var_export($response, true));
-            $connection->send(json_encode($response));
-            return;
-        }
+        $event = new Event($message['event'], $this, $message['data']);
+        $results = $this->eventManager->trigger($event);
 
         $response = [
-            'event' => 'unknownEvent',
-            'data' => null,
+            'event' => 'pong',
+            'data' => $results->last(),
             'error' => null,
         ];
         $this->debug('Send message: ' . var_export($response, true));
         $connection->send(json_encode($response));
+
         return;
     }
 

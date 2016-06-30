@@ -56,7 +56,7 @@ For testing create html (or copy from https://github.com/t4web/Websocket/blob/ma
 
                 var msg = {
                     'event' : 'ping',
-                    'data': input.value
+                    'data': {message: input.value}
                 };
 
                 if (!msg) {
@@ -103,4 +103,54 @@ Or from PHP:
 /** @var \T4web\Websocket\WebsocketClient $wsClient */
 $wsClient = $this->getServiceLocator()->get(\T4web\Websocket\Client::class);
 $wsClient->send('ping', ['message' => 'Hello World']);
+```
+
+### Proposed architecture
+
+Each websocket request message must be json object:
+```json
+{
+    event: 'event-name',
+    data: { field: 'value' }
+}
+```
+
+Websocket response message:
+```json
+{
+    event: 'event-name',
+    data: { field: 'value' },
+    error: 'string|null'
+}
+```
+
+Each websocket request mesage - you can handle by attach to `Websocket:event-name` event (trigered by `Zend\EventManager`).
+We recommend use [t4web/event-subscriber](https://github.com/t4web/EventSubscriber) module: describe `events` config
+with own handlers. `module.config.php`:
+```php
+'events' => [
+    // Event identifier
+    'Websocket' => [
+
+        // event name
+        'ping' => [
+
+            // handler - Callable object
+            Handler\Ping::class,
+        ],
+    ],
+],
+```
+
+`Handler\Ping` :
+```php
+class Ping
+{
+    public function __invoke(\Zend\EventManager\EventInterface $event)
+    {
+        return [
+            'message' => $event->getParam('message'),
+        ];
+    }
+}
 ```

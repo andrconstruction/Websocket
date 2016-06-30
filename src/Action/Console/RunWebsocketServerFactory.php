@@ -3,9 +3,7 @@ namespace T4web\Websocket\Action\Console;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use React\EventLoop\Factory as EventLoopFactory;
-use React\Socket\Server as SocketServer;
-use Symfony\Component\Process\Process;
+use T4web\Websocket\Server;
 
 class RunWebsocketServerFactory implements FactoryInterface
 {
@@ -13,13 +11,10 @@ class RunWebsocketServerFactory implements FactoryInterface
     {
         $serviceLocator = $controllerManager->getServiceLocator();
 
-//        $loop = EventLoopFactory::create();
-
         $config = $serviceLocator->get('Config');
 
         return new RunWebsocketServer(
-//            $loop,
-//            new SocketServer($loop),
+            $serviceLocator->get(Server::class),
             $config['t4web-websocket']
         );
     }

@@ -16,7 +16,13 @@ class RunWebsocketServer extends AbstractActionController
      */
     private $config;
 
+    /**
+     * @var Server
+     */
+    private $server;
+
     public function __construct(
+        Server $server,
         array $config
     )
     {
@@ -28,15 +34,14 @@ class RunWebsocketServer extends AbstractActionController
             ],
             $config
         );
+        $this->server = $server;
     }
 
     public function onDispatch(MvcEvent $e)
     {
         $server = IoServer::factory(
             new HttpServer(
-                new WsServer(
-                    new Server($this->config['server']['debug-enable'])
-                )
+                new WsServer($this->server)
             ),
             $this->config['server']['port']
         );

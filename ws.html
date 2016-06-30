@@ -1,0 +1,65 @@
+<html lang="en">
+<body>
+<input type="text" id="input" placeholder="Message…" />
+<hr />
+<pre id="output"></pre>
+
+<script>
+    var host   = 'ws://127.0.0.1:8088';
+    var socket = null;
+    var input  = document.getElementById('input');
+    var output = document.getElementById('output');
+    var print  = function (message) {
+        var samp       = document.createElement('samp');
+        samp.innerHTML = message + '\n';
+        output.appendChild(samp);
+        return;
+    };
+
+    input.addEventListener('keyup', function (evt) {
+        if (13 !== evt.keyCode) {
+            return;
+        }
+
+        var msg = {
+            'event' : 'ping',
+            'data': {message: input.value}
+        };
+
+        if (!msg) {
+            return;
+        }
+
+        try {
+            print('Send: ' + JSON.stringify(msg, null, 4));
+            socket.send(JSON.stringify(msg));
+            input.value = '';
+            input.focus();
+        } catch (e) {
+            console.log(e);
+        }
+
+        return;
+    });
+
+    try {
+        socket = new WebSocket(host);
+        socket.onopen = function () {
+            print('connection is opened');
+            input.focus();
+            return;
+        };
+        socket.onmessage = function (msg) {
+            print('Receive: ' + JSON.stringify(JSON.parse(msg.data), null, 4));
+            return;
+        };
+        socket.onclose = function () {
+            print('connection is closed');
+            return;
+        };
+    } catch (e) {
+        console.log(e);
+    }
+</script>
+</body>
+</html>
