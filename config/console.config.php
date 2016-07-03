@@ -5,7 +5,7 @@ namespace T4web\Websocket;
 return [
     'router' => [
         'routes' => [
-            'queue-init' => [
+            'websocket-start' => [
                 'type' => 'Simple',
                 'options' => [
                     'route' => 'websocket start',
