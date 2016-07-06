@@ -13,7 +13,8 @@ class ServerFactory implements FactoryInterface
         $config = $serviceLocator->get('Config');
 
         return new Server(
-            new EventManager(),
+            $serviceLocator,
+            $config['t4web-websocket']['event-handlers'],
             $config['t4web-websocket']['server']['debug-enable']
         );
     }

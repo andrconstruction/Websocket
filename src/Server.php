@@ -5,7 +5,7 @@ namespace T4web\Websocket;
 use SplObjectStorage;
 use Exception;
 use Zend\EventManager\EventManager;
-use Zend\EventManager\Event;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -17,25 +17,30 @@ class Server implements MessageComponentInterface
     private $connections;
 
     /**
+     * @var ServiceLocatorInterface
+     */
+    private $serviceLocator;
+
+    /**
+     * @var array
+     */
+    private $handlers;
+
+    /**
      * @var bool
      */
     private $isDebugEnabled;
 
-    /**
-     * @var EventManager
-     */
-    private $eventManager;
-
     public function __construct(
-        EventManager $eventManager,
+        ServiceLocatorInterface $serviceLocator,
+        array $eventHandlers,
         $isDebugEnabled = false
     )
     {
         $this->connections = new SplObjectStorage();
-        $this->eventManager = $eventManager;
+        $this->serviceLocator = $serviceLocator;
+        $this->handlers = $eventHandlers;
         $this->isDebugEnabled = $isDebugEnabled;
-
-        $this->eventManager->setIdentifiers('Websocket');
     }
 
     /**
@@ -54,27 +59,32 @@ class Server implements MessageComponentInterface
 
         $this->debug('Income message: ' . var_export($message, true));
 
-        if (!isset($message['event'])) {
+        if (!isset($message['event']) && !isset($this->handlers[$message['event']])) {
             $response = [
                 'event' => 'unknownEvent',
                 'data' => null,
-                'error' => null,
+                'error' => 'event ' . @$message['event'] . ' not described',
             ];
             $this->debug('Send message: ' . var_export($response, true));
             $connection->send(json_encode($response));
             return;
         }
 
-        $event = new Event($message['event'], $this, $message['data']);
-        $results = $this->eventManager->trigger($event);
+        /** @var Handler\HandlerInterface $handler */
+        $handler = $this->serviceLocator->get($this->handlers[$message['event']]);
 
-        $response = [
-            'event' => 'pong',
-            'data' => $results->last(),
-            'error' => null,
-        ];
-        $this->debug('Send message: ' . var_export($response, true));
-        $connection->send(json_encode($response));
+        if (!($handler instanceof Handler\HandlerInterface)) {
+            $response = [
+                'event' => 'unknownEvent',
+                'data' => null,
+                'error' => 'handler for event ' . $message['event'] . ' must be instance of T4web\Websocket\Handler\HandlerInterface',
+            ];
+            $this->debug('Send message: ' . var_export($response, true));
+            $connection->send(json_encode($response));
+            return;
+        }
+
+        $handler->handle($message['event'], $message['data'], $connection, $this->connections);
 
         return;
     }
