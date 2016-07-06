@@ -11,4 +11,10 @@ return [
             Action\Console\RunWebsocketServer::class => Action\Console\RunWebsocketServerFactory::class,
         ),
     ),
+
+    'view_helpers' => array(
+        'factories' => array(
+            'getWebsocketHost' => View\Helper\GetWebSocketHostFactory::class,
+        ),
+    ),
 ];
