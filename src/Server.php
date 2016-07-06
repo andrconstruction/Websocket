@@ -59,7 +59,7 @@ class Server implements MessageComponentInterface
 
         $this->debug('Income message: ' . var_export($message, true));
 
-        if (!isset($message['event']) && !isset($this->handlers[$message['event']])) {
+        if (!isset($message['event']) || !isset($this->handlers[$message['event']])) {
             $response = [
                 'event' => 'unknownEvent',
                 'data' => null,
