@@ -131,17 +131,16 @@ with own handlers. `module.config.php`:
 'events' => [
     // Event identifier
     'Websocket' => [
-
-        // event name
-        'ping' => [
-
-            // handler - Callable object
-            Handler\Ping::class,
+        
+        'event-handlers' => [
+            
+            // event name => handler - Callable object
+            'ping' => Handler\Ping::class,
         ],
     ],
 ],
 ```
-
+    
 `Handler\Ping` :
 ```php
 class Ping
