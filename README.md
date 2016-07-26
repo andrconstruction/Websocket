@@ -124,16 +124,10 @@ Websocket response message:
 }
 ```
 
-Each websocket request mesage - you can handle by attach to `Websocket:event-name` event (trigered by `Zend\EventManager`).
-We recommend use [t4web/event-subscriber](https://github.com/t4web/EventSubscriber) module: describe `events` config
-with own handlers. `module.config.php`:
+Each websocket request mesage - you can handle. Just describe own handlers in `t4web-websocket[event-handlers]` `module.config.php`:
 ```php
-'events' => [
-    // Event identifier
-    'Websocket' => [
-        
+'t4web-websocket' => [
         'event-handlers' => [
-            
             // event name => handler - Callable object
             'ping' => Handler\Ping::class,
         ],
