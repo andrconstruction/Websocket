@@ -136,13 +136,19 @@ Each websocket request mesage - you can handle. Just describe own handlers in `t
     
 `Handler\Ping` :
 ```php
-class Ping
+use SplObjectStorage;
+use Ratchet\ConnectionInterface;
+
+class Ping implements T4web\Websocket\Handler\HandlerInterface
 {
-    public function __invoke(\Zend\EventManager\EventInterface $event)
+    public function handle($eventName, array $data, ConnectionInterface $connection, SplObjectStorage $connections)
     {
-        return [
-            'message' => $event->getParam('message'),
+        $response = [
+            'event' => 'pong',
+            'data' => $data,
+            'error' => null,
         ];
+        $connection->send(json_encode($response));
     }
 }
 ```
