@@ -127,10 +127,9 @@ Websocket response message:
 Each websocket request mesage - you can handle. Just describe own handlers in `t4web-websocket[event-handlers]` `module.config.php`:
 ```php
 't4web-websocket' => [
-        'event-handlers' => [
-            // event name => handler - Callable object
-            'ping' => Handler\Ping::class,
-        ],
+    'event-handlers' => [
+        // event name => handler - Callable object
+        'ping' => Handler\Ping::class,
     ],
 ],
 ```
